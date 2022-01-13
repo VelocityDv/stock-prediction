@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import pprint
+import random
 
 # dont need to optimize time.
 # dont care since its for maths. ahhahahah :)
@@ -32,7 +33,10 @@ class Markovchain():
             else: 
                 self.ngram_frequency[state][next] += 1
 
-          # freq = dict(sorted(self.ngram_frequency.items(), key=lambda x: float(x[0]), reverse=False))
+        # pprint.pprint(self.ngram_frequency)
+        # freq = dict(sorted(self.ngram_frequency.items(), key=lambda x: float(x[0]), reverse=False))
+
+
 
 
     def generate_ngrams(self):
@@ -56,26 +60,50 @@ class Markovchain():
                 prev = cur      
                 
             i+= 1
+
+    def next_price(self, state):
+        ngram_prob_density = {}
+        sum_token_counter = sum(self.ngram_frequency[state].values())
+
+        for next in self.ngram_frequency[state].keys():
+            next_counter = self.ngram_frequency[state][next]
+            ngram_prob_density[next] = next_counter / sum_token_counter
+
+        # ngram_prob_density = dict(sorted(ngram_prob_density.items(), key=lambda x: x[0], reverse=True))
+        pprint.pprint(ngram_prob_density)
+        ngram_prob_density = sorted(ngram_prob_density.items(), key=lambda x: x[0], reverse=True)
+        top_ngram = ngram_prob_density[:1]
         
+        ngram_prob_density = dict(ngram_prob_density)
+        
+  
+        # did'nt know you can do this fucking black magic shit.
+        # cant be fucked fixing code infront. I am a c programmer. just habits
+        same_prob = []
+        same_prob.append(top_ngram[0][0])
 
-    def get_prob(self):
-        pprint.pprint(self.ngram_frequency)
+        for next in ngram_prob_density:
+            if top_ngram[0][0] is not next:
+                if(top_ngram[0][1] == ngram_prob_density[next]):
+                    same_prob.append(next)
 
 
-    def next_price(self):
-        pass
+        if len(same_prob) == 1:
+            return top_ngram[0]
+        else:
+            # if have same prob. return random. can cause butterfly effect is predicting a chain of events.
+            return random.choice(same_prob)     
 
+    # def calc_mean(self):
+    #     sum = 0
+    #     for x in self.changes:
+    #         sum += x
+    #     return sum / len(self.changes)
 
-    def calc_mean(self):
-        sum = 0
-        for x in self.changes:
-            sum += x
-        return sum / len(self.changes)
-
-    def calc_var(self):
-        sum = 0
-        mean = self.calc_mean()
-        for i in self.changes:
-            sum +=  pow((i - mean), 2)
+    # def calc_var(self):
+    #     sum = 0
+    #     mean = self.calc_mean()
+    #     for i in self.changes:
+    #         sum +=  pow((i - mean), 2)
             
-        return sum / len(self.changes)
+    #     return sum / len(self.changes)
