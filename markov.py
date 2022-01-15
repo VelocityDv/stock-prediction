@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pprint
 import random
+from contextlib import redirect_stdout
 
-# dont need to optimize time.
-# dont care since its for maths. ahhahahah :)
+# fuck so many iterations. trial and error fuck sakes. 
 
 class Markovchain():
     def __init__(self, data):
@@ -33,10 +33,15 @@ class Markovchain():
             else: 
                 self.ngram_frequency[state][next] += 1
 
-        # pprint.pprint(self.ngram_frequency)
+        with open('out.txt', 'w') as f:
+            with redirect_stdout(f):
+                pprint.pprint(self.ngram_frequency)
+    
         # freq = dict(sorted(self.ngram_frequency.items(), key=lambda x: float(x[0]), reverse=False))
 
-
+        start_state = (self.changes[len(self.changes)-2],self.changes[len(self.changes)-1])
+        # print(self.next_price(start_state))
+        print(start_state)
 
 
     def generate_ngrams(self):
