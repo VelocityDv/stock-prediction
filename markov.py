@@ -56,7 +56,7 @@ class Markovchain():
                 
             else:
                 cur = row['Close']
-                change = prev - cur
+                change = cur - prev
                 
                 change = float("{:.2f}".format(change))
                 # change = int(change)
