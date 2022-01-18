@@ -4,6 +4,7 @@ import pprint
 import random
 from contextlib import redirect_stdout
 
+
 # fuck so many iterations. trial and error fuck sakes. 
 
 class Markovchain():
@@ -21,9 +22,9 @@ class Markovchain():
         #     state = (single_change[i], single_change[i+1])
         #     self.ngram_frequency[state] = {}
 
-        for i in range(len(self.changes) - 2):
-            state = (self.changes[i], self.changes[i+1])
-            next = self.changes[i+2]
+        for i in range(len(self.changes) - 1):
+            state = (self.changes[i])
+            next = self.changes[i+1]
 
             if state not in self.ngram_frequency.keys():
                 self.ngram_frequency[state] = {}
@@ -33,15 +34,28 @@ class Markovchain():
             else: 
                 self.ngram_frequency[state][next] += 1
 
-        with open('out.txt', 'w') as f:
-            with redirect_stdout(f):
-                pprint.pprint(self.ngram_frequency)
+        # print(len(set(self.changes)))
+        # with open('out.txt', 'w') as f:
+        #     with redirect_stdout(f):
+        #         pprint.pprint(self.ngram_frequency)
     
         # freq = dict(sorted(self.ngram_frequency.items(), key=lambda x: float(x[0]), reverse=False))
 
-        start_state = (self.changes[len(self.changes)-2],self.changes[len(self.changes)-1])
-        # print(self.next_price(start_state))
-        print(start_state)
+        
+        with open('plot.txt', 'w') as f:
+            with redirect_stdout(f):
+                tmp = []
+                for i in range(5):
+                    start_state = (self.changes[len(self.changes)-1])
+                    output = []
+                    for j in range(50):
+                        start_state = self.next_price(start_state)
+                        output.append(start_state)
+                        
+                        # start_state = 0.11
+                        # print(self.next_price(start_state))
+                    tmp.append(output)
+                print(tmp)
 
 
     def generate_ngrams(self):
@@ -75,8 +89,11 @@ class Markovchain():
             ngram_prob_density[next] = next_counter / sum_token_counter
 
         # ngram_prob_density = dict(sorted(ngram_prob_density.items(), key=lambda x: x[0], reverse=True))
-        pprint.pprint(ngram_prob_density)
-        ngram_prob_density = sorted(ngram_prob_density.items(), key=lambda x: x[0], reverse=True)
+        # pprint.pprint(ngram_prob_density)
+
+        # sort by values
+        ngram_prob_density = sorted(ngram_prob_density.items(), key=lambda x: float(x[1]), reverse=True)
+        # print(ngram_prob_density)
         top_ngram = ngram_prob_density[:1]
         
         ngram_prob_density = dict(ngram_prob_density)
@@ -94,21 +111,21 @@ class Markovchain():
 
 
         if len(same_prob) == 1:
-            return top_ngram[0]
+            return same_prob[0]
         else:
             # if have same prob. return random. can cause butterfly effect is predicting a chain of events.
-            return random.choice(same_prob)     
+            return random.choice(same_prob) 
 
-    # def calc_mean(self):
-    #     sum = 0
-    #     for x in self.changes:
-    #         sum += x
-    #     return sum / len(self.changes)
+    def calc_mean(self):
+        sum = 0
+        for x in self.changes:
+            sum += x
+        return sum / len(self.changes)
 
-    # def calc_var(self):
-    #     sum = 0
-    #     mean = self.calc_mean()
-    #     for i in self.changes:
-    #         sum +=  pow((i - mean), 2)
+    def calc_var(self):
+        sum = 0
+        mean = self.calc_mean()
+        for i in self.changes:
+            sum +=  pow((i - mean), 2)
             
-    #     return sum / len(self.changes)
+        return sum / len(self.changes)
