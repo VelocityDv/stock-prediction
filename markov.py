@@ -3,6 +3,7 @@ import pandas as pd
 import pprint
 import random
 from contextlib import redirect_stdout
+import math
 
 
 # fuck so many iterations. trial and error fuck sakes. 
@@ -12,6 +13,25 @@ class Markovchain():
         self.data = data
         self.changes = []
         self.ngram_frequency = {}
+        self.std = 0
+
+    def calc_state(self, n):
+        if n < -2*self.std:
+            return "s1"
+        if -2*self.std <= n < -1*self.std:
+            return "s2"
+        if -1*self.std <= n < 0:
+            return "s3"
+        if n == 0:
+            return "s4"
+        if 0 < n <= self.std:
+            return "s5"
+        if self.std < n <= 2*self.std:
+            return "s6"
+        if 2*self.std < n:
+            return "s7"
+
+        
 
     def update(self):
         self.generate_ngrams()
@@ -22,9 +42,11 @@ class Markovchain():
         #     state = (single_change[i], single_change[i+1])
         #     self.ngram_frequency[state] = {}
 
+        self.std = math.sqrt(self.calc_var())
         for i in range(len(self.changes) - 1):
-            state = (self.changes[i])
-            next = self.changes[i+1]
+  
+            state = self.calc_state(self.changes[i])
+            next = self.calc_state(self.changes[i+1])
 
             if state not in self.ngram_frequency.keys():
                 self.ngram_frequency[state] = {}
@@ -34,29 +56,53 @@ class Markovchain():
             else: 
                 self.ngram_frequency[state][next] += 1
 
-        # print(len(set(self.changes)))
+        print(len(self.changes))
+
         # with open('out.txt', 'w') as f:
         #     with redirect_stdout(f):
         #         pprint.pprint(self.ngram_frequency)
     
+        # out = {}
+        # for state in self.ngram_frequency.keys():
+        #     out[state] = {}
+        #     for next in self.ngram_frequency[state].keys():
+        #         out[state][next] = self.get_prob(state, next)
+
+
+        # with open('out1.txt', 'w') as f:
+        #     with redirect_stdout(f):
+        #         pprint.pprint(out)
+
+
         # freq = dict(sorted(self.ngram_frequency.items(), key=lambda x: float(x[0]), reverse=False))
+        # with open('graph.txt', 'w') as f:
+        #     with redirect_stdout(f):
+        #         for i in self.changes:
+        #             print(i)
 
         
-        with open('plot.txt', 'w') as f:
-            with redirect_stdout(f):
-                tmp = []
-                for i in range(5):
-                    start_state = (self.changes[len(self.changes)-1])
-                    output = []
-                    for j in range(50):
-                        start_state = self.next_price(start_state)
-                        output.append(start_state)
+        # with open('plot.txt', 'w') as f:
+        #     with redirect_stdout(f):
+        #         tmp = []
+        #         for i in range(5):
+        #             start_state = (self.changes[len(self.changes)-1])
+        #             output = []
+        #             for j in range(50):
+        #                 start_state = self.next_price(start_state)
+        #                 output.append(start_state)
                         
-                        # start_state = 0.11
-                        # print(self.next_price(start_state))
-                    tmp.append(output)
-                print(tmp)
+        #                 # start_state = 0.11
+        #                 # print(self.next_price(start_state))
+        #             tmp.append(output)
+        #         print(tmp)
 
+    def get_prob(self, state, next):
+
+        context_counter = self.ngram_frequency[state][next]
+        sum_token_counter = sum(self.ngram_frequency[state].values())
+            
+        return(context_counter / sum_token_counter)
+#
 
     def generate_ngrams(self):
         i = 0
@@ -129,3 +175,7 @@ class Markovchain():
             sum +=  pow((i - mean), 2)
             
         return sum / len(self.changes)
+
+
+
+
