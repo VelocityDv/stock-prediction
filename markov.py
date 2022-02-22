@@ -3,7 +3,7 @@ import pandas as pd
 import pprint
 import random
 from contextlib import redirect_stdout
-import math
+from math import sqrt
 
 
 # fuck so many iterations. trial and error fuck sakes. 
@@ -42,7 +42,7 @@ class Markovchain():
         #     state = (single_change[i], single_change[i+1])
         #     self.ngram_frequency[state] = {}
 
-        self.std = math.sqrt(self.calc_var())
+        self.std = sqrt(self.calc_var())
         for i in range(len(self.changes) - 1):
   
             state = self.calc_state(self.changes[i])
