@@ -18,3 +18,8 @@ class BlackScholes():
         
     def d1(self):
         return (log(self.St/self.k)+((self.r+self.sigma**2/2)*self.t)/self.sigma*sqrt(self.t))
+
+    def d2(self):
+        return self.d1-self.sigma*sqrt(self.t)
+
+        
