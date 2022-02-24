@@ -1,5 +1,6 @@
 import numpy as np
 from math import log, sqrt, pi, exp
+from scipy.stats import norm
 
 class BlackScholes():
     def __init__(self):
@@ -22,4 +23,10 @@ class BlackScholes():
     def d2(self):
         return self.d1-self.sigma*sqrt(self.t)
 
-        
+    def call(self):
+        return self*norm.cdf(self.d1(self.St, self.k, self.r, self.t, self.sigma))-self.k*exp(-self.r*self.t)*norm.cdf(self.d2(self.St, self.k, self.r, self.t, self.sigma))
+
+    def put(self):
+        pass
+
+    # binary options. either all or nothing
