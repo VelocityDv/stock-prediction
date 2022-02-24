@@ -42,3 +42,14 @@ class BlackScholes():
     def call_rho(self):
         return 0.01*(self.k*self.t*exp(-self.r*self.t)*norm.cdf(self.d2()(self.St, self.k, self.r, self.t, self.sigma)))
 
+
+    def put_delta(self):
+        return -norm.cdf(-self.d1()(self.St, self.k, self.r, self.t, self.sigma))
+    def put_gamma(self):
+        return norm.pdf(self.d1()(self.St, self.k, self.r, self.t, self.sigma))/(self.St*self.sigma*sqrt(self.t))
+    def put_vega(self):
+        return 0.01*(self.St*norm.pdf(self.d1()(self.St, self.k, self.r, self.t, self.sigma))*sqrt(self.t))
+    def put_theta(self):
+        return 0.01*(-(self.St*norm.pdf(self.d1()(self.St, self.k, self.r, self.t, self.sigma))*self.sigma)/(2*sqrt(self.t)) + self.r*self.k*exp(-self.r*self.t)*norm.cdf(-self.d2()(self.St, self.k, self.r, self.t, self.sigma)))
+    def put_rho(self):
+        return 0.01*(-self.k*self.t*exp(-self.r*self.t)*norm.cdf(-self.d2()(self.St, self.k, self.r, self.t, self.sigma)))
