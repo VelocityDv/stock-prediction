@@ -4,6 +4,7 @@ import pprint
 import random
 from contextlib import redirect_stdout
 from math import sqrt
+import numpy as np
 
 
 # fuck so many iterations. trial and error fuck sakes. 
@@ -14,6 +15,15 @@ class Markovchain():
         self.changes = []
         self.ngram_frequency = {}
         self.std = 0
+
+        self.transition_state = [[1/43, 2/43, 12/43, 0, 13/43, 5/43, 10/43],
+                                [5/52, 8/52, 13/52, 0, 16/52, 8/52, 2/52],
+                                [12/475, 16/475, 177/455, 2/475, 216/475, 40/475, 12/475],
+                                [0, 0, 4/7, 0, 2/7, 1/7, 0],
+                                [16/536, 13/536, 214/536, 5/536, 251/536, 26/536, 11/536],
+                                [2/97, 5/97, 40/97, 0, 32/97, 12/97, 6/97],
+                                [7/47, 8/47, 16/47, 0, 5/47, 5/47, 6/47]]
+        self.start_state = [0, 0, 0, 0, 1, 0, 0]
 
     def calc_state(self, n):
         if n < -2*self.std:
@@ -56,7 +66,13 @@ class Markovchain():
             else: 
                 self.ngram_frequency[state][next] += 1
 
-        print(len(self.changes))
+        # print(len(self.changes))
+        with open('results/out.txt', 'w') as f:
+            with redirect_stdout(f):
+                for i in range(500):
+                    self.dot_product_matrix()
+                
+                    print(self.start_state[0])
 
         # with open('out.txt', 'w') as f:
         #     with redirect_stdout(f):
@@ -69,7 +85,7 @@ class Markovchain():
         #         out[state][next] = self.get_prob(state, next)
 
 
-        # with open('out1.txt', 'w') as f:
+        # with open('/results/out1.txt', 'w') as f:
         #     with redirect_stdout(f):
         #         pprint.pprint(out)
 
@@ -92,12 +108,9 @@ class Markovchain():
         #                 output.append(start_state)
                         
         #                 # start_state = 0.11
-        #                 # print(self.next_price(start_state))
-        #             tmp.append(output)
-        #         print(tmp)
-
-    def get_prob(self, state, next):
-
+        #                 # p # for i in range(7):
+        #     for j in range(7):
+        #         current_transition_state = []
         context_counter = self.ngram_frequency[state][next]
         sum_token_counter = sum(self.ngram_frequency[state].values())
             
@@ -175,6 +188,17 @@ class Markovchain():
             sum +=  pow((i - mean), 2)
             
         return sum / len(self.changes)
+
+
+    def dot_product_matrix(self):
+        # for i in range(7):
+        #     for j in range(7):
+        #         current_transition_state = []
+        self.start_state = np.dot(self.start_state, self.transition_state)
+        return self.start_state
+
+        # self.transition_state = current_transition_state
+        
 
 
 

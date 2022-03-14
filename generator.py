@@ -8,8 +8,8 @@ def main():
     data = yf.download('AAPL', '2016-12-31', '2022-01-01')
     model = Markovchain(data)
     model.update()
-    print(model.calc_mean())
-    print(model.calc_var())
+    # print(model.calc_mean())
+    # print(model.calc_var())
     
     # compare_data = yf.download('AAPL', '2022-12-31', '2020-02-14')
     # compare_data = yf.download('AAPL', '2020-12-31', '2021-02-15')
