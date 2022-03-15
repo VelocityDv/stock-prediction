@@ -16,14 +16,14 @@ class Markovchain():
         self.ngram_frequency = {}
         self.std = 0
 
-        self.transition_state = [[1/43, 2/43, 12/43, 0, 13/43, 5/43, 10/43],
+        self.transition_state = np.array([[1/43, 2/43, 12/43, 0, 13/43, 5/43, 10/43],
                                 [5/52, 8/52, 13/52, 0, 16/52, 8/52, 2/52],
-                                [12/475, 16/475, 177/455, 2/475, 216/475, 40/475, 12/475],
+                                [12/475, 16/475, 177/475, 2/475, 216/475, 40/475, 12/475],
                                 [0, 0, 4/7, 0, 2/7, 1/7, 0],
                                 [16/536, 13/536, 214/536, 5/536, 251/536, 26/536, 11/536],
                                 [2/97, 5/97, 40/97, 0, 32/97, 12/97, 6/97],
-                                [7/47, 8/47, 16/47, 0, 5/47, 5/47, 6/47]]
-        self.start_state = [0, 0, 0, 0, 1, 0, 0]
+                                [7/47, 8/47, 16/47, 0, 5/47, 5/47, 6/47]])
+        self.start_state = np.array([0, 0, 0, 0, 1, 0, 0])
 
     def calc_state(self, n):
         if n < -2*self.std:
@@ -69,10 +69,10 @@ class Markovchain():
         # print(len(self.changes))
         with open('results/out.txt', 'w') as f:
             with redirect_stdout(f):
-                for i in range(500):
+                for i in range(250):
                     self.dot_product_matrix()
                 
-                    print(self.start_state[0])
+                    print(self.start_state)
 
         # with open('out.txt', 'w') as f:
         #     with redirect_stdout(f):
@@ -195,7 +195,6 @@ class Markovchain():
         #     for j in range(7):
         #         current_transition_state = []
         self.start_state = np.dot(self.start_state, self.transition_state)
-        return self.start_state
 
         # self.transition_state = current_transition_state
         
